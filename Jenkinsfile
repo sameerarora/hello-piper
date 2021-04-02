@@ -3,12 +3,14 @@ pipeline{
     stages {
         stage('Checkout code') {
             steps {
-                checkout scm
+                def scmVars = checkout scm
+                env.GIT_COMMIT = scmVars.GIT_COMMIT
             }
         }
         stage('build'){
             steps{
             sh '''
+                echo "building ${env.GIT_COMMIT}"
                 ./mvnw clean install -DskipTests
                '''
             }
@@ -18,6 +20,13 @@ pipeline{
                 sh '''
                 ./mvnw test
                '''
+            }
+        }
+        stage('build docker image'){
+            steps{
+                sh '''
+                ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${env.GIT_COMMIT}
+                '''
             }
         }
     }
