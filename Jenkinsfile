@@ -9,9 +9,14 @@ pipeline{
         stage('build'){
             steps{
             sh '''
-                echo "Starting build....."
-                ./mvnw clean install
-                echo "Done!!"
+                /mvnw clean install -DskipTests
+               '''
+            }
+        }
+        stage('test'){
+            steps{
+                sh '''
+                /mvnw test
                '''
             }
         }
