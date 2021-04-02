@@ -23,9 +23,8 @@ pipeline{
         }
         stage('build docker image'){
             steps{
-                GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
                 sh '''
-                ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${GIT_COMMIT_REV}
+                ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${env.GIT_COMMIT}
                 '''
             }
         }
