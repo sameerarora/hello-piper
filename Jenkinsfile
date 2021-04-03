@@ -20,7 +20,7 @@ pipeline{
         stage('build'){
             steps{
             sh '''
-                echo "building ${env.GIT_COMMIT}"
+                echo "building ${env.GIT_COMMIT_ID}"
                 ./mvnw clean install -DskipTests
                '''
             }
