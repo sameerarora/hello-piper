@@ -19,11 +19,10 @@ pipeline{
         }
         stage('build'){
             steps{
-            sh '''
-                #!/usr/bin/env bash
+            sh """
                 echo "building ${env.GIT_COMMIT_ID}"
                 ./mvnw clean install -DskipTests
-               '''
+               """
             }
         }
         stage('test'){
@@ -35,10 +34,9 @@ pipeline{
         }
         stage('build docker image'){
             steps{
-                sh '''
-                 #!/usr/bin/env bash
+                sh """
                 ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${env.GIT_COMMIT_ID}
-                '''
+                """
             }
         }
     }
