@@ -1,7 +1,7 @@
 pipeline{
     agent any
     environment{
-        GIT_COMMIT_ID = ""
+        GIT_COMMIT_ID = ''
     }
     stages {
         stage('Checkout code') {
@@ -20,6 +20,7 @@ pipeline{
         stage('build'){
             steps{
             sh '''
+                #!/usr/bin/env bash
                 echo "building ${env.GIT_COMMIT_ID}"
                 ./mvnw clean install -DskipTests
                '''
@@ -35,6 +36,7 @@ pipeline{
         stage('build docker image'){
             steps{
                 sh '''
+                 #!/usr/bin/env bash
                 ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${env.GIT_COMMIT_ID}
                 '''
             }
