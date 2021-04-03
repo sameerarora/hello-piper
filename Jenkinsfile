@@ -10,10 +10,13 @@ pipeline{
             }
         }
         stage('Configure'){
-            env.GIT_COMMIT_ID = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-            sh '''
-                echo "Running build for head at ${env.GIT_COMMIT_ID}"
-               '''
+            steps{
+                    env.GIT_COMMIT_ID = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+                    sh '''
+                        echo "Running build for head at ${env.GIT_COMMIT_ID}"
+                    '''
+            }
+            
         }
         stage('build'){
             steps{
