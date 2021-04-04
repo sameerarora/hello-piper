@@ -30,5 +30,13 @@ pipeline{
                 """
             }
         }
+        stage('Push image to docker registry'){
+            steps{
+                sh """
+                    docker tag hello-piper:${env.GIT_COMMIT} localhost:5000/hello-piper:${env.GIT_COMMIT}
+                    docker push localhost:5000/hello-piper:${env.GIT_COMMIT}
+                """
+            }
+        }
     }
 }
