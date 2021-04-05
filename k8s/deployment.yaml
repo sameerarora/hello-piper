@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: hello-piper
+  name: hello-piper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-piper
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hello-piper
+    spec:
+      containers:
+      - image: localhost:5000/hello-piper
+        name: hello-piper
+        resources: {}
+status: {}
