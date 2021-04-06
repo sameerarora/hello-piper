@@ -38,5 +38,13 @@ pipeline{
                 """
             }
         }
+        stage('Deploy application to Kubernetes cluster'){
+            steps{
+                sh """
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                """
+            }
+        }
     }
 }

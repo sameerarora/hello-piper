@@ -11,7 +11,7 @@ public class BaseController {
 
     @GetMapping("/base-version")
     public BaseVersion baseVersion(){
-        return new BaseVersion("1.0.0", "hello-piper");
+        return new BaseVersion("1.0.1", "hello-piper");
     }
 
 }

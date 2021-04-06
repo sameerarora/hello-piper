@@ -18,7 +18,7 @@ spec:
         app: hello-piper
     spec:
       containers:
-      - image: localhost:5000/hello-piper
+      - image: sameerarora11/hello-piper
         name: hello-piper
         resources: {}
 status: {}
