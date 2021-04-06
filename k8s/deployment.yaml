@@ -18,7 +18,7 @@ spec:
         app: hello-piper
     spec:
       containers:
-      - image: sameerarora11/hello-piper
+      - image: sameerarora11/hello-piper:v0.0.1
         name: hello-piper
         resources: {}
 status: {}
