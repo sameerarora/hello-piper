@@ -41,7 +41,7 @@ pipeline{
         stage('Deploy application to Kubernetes cluster'){
             steps{
                     sh """
-                       /home/vagrant/helm/linux-amd64/helm install --name hello-piper ./hello-piper
+                       /home/vagrant/helm/linux-amd64/helm install ./hello-piper
                     """
             }
         }
