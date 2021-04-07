@@ -1,10 +1,7 @@
 pipeline{
-     agent {
-        kubernetes {
-          inheritFrom 'helm'
-          defaultContainer 'jenkins-slave-ssr'
-        }
-      }
+    agent {
+       label "docker"
+    }
     stages {
         stage('Checkout code') {
             steps {
@@ -33,8 +30,15 @@ pipeline{
                 """
             }
         }
-
-        stage('Deploy application to EKS'){
+        stage('Push image to docker registry'){
+            steps{
+                sh """
+                    docker tag hello-piper:${env.GIT_COMMIT} sameerarora11/hello-piper:v0.1.1
+                    docker push sameerarora11/hello-piper:v0.1.1
+                """
+            }
+        }
+        stage('Deploy application to Kubernetes cluster'){
             steps{
                     sh """
                        helm install --name hello-piper ./hello-piper
