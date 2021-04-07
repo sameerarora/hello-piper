@@ -37,7 +37,7 @@ pipeline{
         stage('Deploy application to EKS'){
             steps{
                     sh """
-                       helm install --name hello-piper ./hello-piper
+                       helm install name hello-piper ./hello-piper
                     """
             }
         }
