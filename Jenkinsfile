@@ -29,7 +29,7 @@ pipeline{
         stage('build docker image'){
             steps{
                 sh """
-                ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${env.GIT_COMMIT} -X
+                 docker build -t hello-piper:${env.GIT_COMMIT} .
                 """
             }
         }
