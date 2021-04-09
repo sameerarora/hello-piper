@@ -33,18 +33,28 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+           - /bin/sh
+           - -c
+           - touch /tmp/healthy;
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /weather/london
-              port: http
+           exec:
+            command:
+            - cat
+            - /tmp/healthy
+           initialDelaySeconds: 5
+           periodSeconds: 5
           readinessProbe:
-            httpGet:
-              path: /weather/london
-              port: http
+            exec:
+             command:
+             - cat
+             - /tmp/healthy
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
