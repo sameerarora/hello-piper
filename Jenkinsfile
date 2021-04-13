@@ -26,7 +26,7 @@ pipeline{
         stage('build docker image'){
             steps{
                 sh """
-                ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=hello-piper:${env.GIT_COMMIT}
+                docker build -t hello-piper:${env.GIT_COMMIT} .
                 """
             }
         }
@@ -41,8 +41,7 @@ pipeline{
         stage('Deploy application to Kubernetes cluster'){
             steps{
                 sh """
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
+                    helm install hello-piper ./hello-piper -n dev
                 """
             }
         }
