@@ -1,6 +1,8 @@
 package com.paytm.hellopiper.controller;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -18,6 +20,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -32,6 +38,9 @@ public class WeatherControllerTest {
     @Value("${wiremock.port}")
     private int port;
 
+    @Value("${api.endpoint}")
+    private String apiEndpoint;
+
     @LocalServerPort
     private int applicationPort;
 
@@ -43,13 +52,13 @@ public class WeatherControllerTest {
     WireMockServer wireMockServer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         wireMockServer = new WireMockServer(wireMockConfig().port(port));
         wireMockServer.start();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         wireMockServer.stop();
     }
 
@@ -61,12 +70,53 @@ public class WeatherControllerTest {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(responseBody))));
-        ResponseEntity<String> responseEntity = restTemplate.exchange("http://localhost:" + applicationPort + "/weather/chennai", HttpMethod.GET, null, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(String.format(apiEndpoint, applicationPort, "chennai"), HttpMethod.GET, null, String.class);
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
         ObjectMapper objectMapper = new ObjectMapper();
         WeatherInfo weatherInfo = objectMapper.readValue(responseEntity.getBody(), WeatherInfo.class);
         assertThat(weatherInfo.getCityName(), is("Chennai"));
     }
 
+    @Test
+    public void jwt() throws UnsupportedEncodingException {
+        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("GMT+05:30")).plusMinutes(2);
+        String ts = localDateTime.toString();
+        Algorithm buildAlgorithm = Algorithm.HMAC256("083e1fa8-f144-4d62-af65-a8728e3e132e");
+        String token = JWT.create().withIssuer("OE")
+                .withClaim("clientId", "RISK")
+                .withClaim("custId", "1000704643")
+                .withClaim("timestamp", ts + "+05:30").sign(buildAlgorithm);
+        System.out.println(token);
 
+//        Algorithm algorithm = Algorithm.HMAC256("6960f1ac-c364-11eb-a122-f0189877b474");
+//        String jwtToken = JWT.create()
+//                .withIssuer("paytm-onboarding-engine")
+//                .withClaim("X-Client-Secret", "6960f1ac-c364-11eb-a122-f0189877b474")
+//                .withClaim("payload","{\n" +
+//                        "  \"lead\": {\n" +
+//                        "    \"id\": \"550a9490-89c5-4498-ba46-3de5f877f07\",\n" +
+//                        "    \"creation_date\": \"23-08-1996\" \n" +
+//                        "  },\n" +
+//                        "  \"user\": {\n" +
+//                        "    \"last_name\": \"SINGH\", \n" +
+//                        "    \"first_name\": \"USHA\", \n" +
+//                        "    \"middle_name\": \"K\",  \n" +
+//                        "    \"id\":\"1000704643\", \n" +
+//                        "    \"dob\": \"14-03-1972\", \n" +
+//                        "    \"pan\": \"BKLPS9641B\", \n" +
+//                        "    \"email\": \"yogesh.yadav@paytm.com\",\n" +
+//                        "    \"mobile\": \"7411000282\", \n" +
+//                        "    \"location\" : {\n" +
+//                        "      \"latitude\": null, \n" +
+//                        "      \"longitude\": null\n" +
+//                        "    },\n" +
+//                        "    \"product\": {\n" +
+//                        "      \"type\": \"PP\"\n" +
+//                        "    }\n" +
+//                        "  }\n" +
+//                        "}")
+//              .sign(algorithm);
+//        System.out.println(jwtToken);
+    }
+    //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGllbnRJZCI6IlJJU0siLCJpc3MiOiJSSVNLIiwiY3VzdElkIjoiMTAwMDcwNDY0MyIsInRpbWVzdGFtcCI6IkZyaSBKdW4gMDQgMTc6MTg6MDEgSVNUIDIwMjErMDU6MzAifQ.CK48LsCXAIKx2i0ag_Rv8HbAW3klGwgG_jWvxi4jyCs
 }
